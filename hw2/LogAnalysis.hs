@@ -96,13 +96,18 @@ insert _ _ = Leaf
 --
 --  Examples:
 --
--- >>> build [(parseMessage "W 42 lol warning"), (parseMessage "I 20 lol info"), (parseMessage "E 2 55 lol error")] == (Node (Node Leaf (parseMessage "I 20 lol info") Leaf) (parseMessage "W 42 lol warning") (Node Leaf (parseMessage "E 2 55 lol error") Leaf))
+-- >>> build [parseMessage "W 42 lol warning"] == Node Leaf (parseMessage "W 42 lol warning") Leaf
 -- True
-build :: [LogMessage] -> MessageTree 
-build [] = Leaf 
-build msg = buildTree msg Leaf 
-    where 
-        buildTree :: [LogMessage] -> MessageTree -> MessageTree 
-        buildTree [] mt = mt 
-        buildTree (x:xs) mt = buildTree xs $ insert x mt
-
+--
+-- >>> build [parseMessage "W 42 lol warning", parseMessage "I 20 lol info"]  == Node (Node Leaf (parseMessage "I 20 lol info") Leaf) (parseMessage "W 42 lol warning") Leaf
+-- True
+--
+-- >>> build [parseMessage "W 42 lol warning", parseMessage "I 20 lol info", parseMessage "E 2 55 lol error"] == Node (Node Leaf (parseMessage "I 20 lol info") Leaf) (parseMessage "W 42 lol warning") (Node Leaf (parseMessage "E 2 55 lol error") Leaf)
+-- True
+build :: [LogMessage] -> MessageTree
+build [] = Leaf
+build msg = buildTree msg Leaf
+  where
+    buildTree :: [LogMessage] -> MessageTree -> MessageTree
+    buildTree [] mt = mt
+    buildTree (x : xs) mt = buildTree xs $ insert x mt
