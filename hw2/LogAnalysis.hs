@@ -111,3 +111,26 @@ build msg = buildTree msg Leaf
     buildTree :: [LogMessage] -> MessageTree -> MessageTree
     buildTree [] mt = mt
     buildTree (x : xs) mt = buildTree xs $ insert x mt
+
+
+-- | inorder traversal
+--
+-- Examples:
+--
+-- >>> inOrder (Node Leaf (parseMessage "W 42 lol warning") Leaf) == [LogMessage Warning 42 "lol warning"]
+-- True
+--
+-- >>> inOrder (Node (Node Leaf (parseMessage "I 20 lol info") Leaf) (parseMessage "W 42 lol warning") Leaf) == [LogMessage Info 20 "lol info", LogMessage Warning 42 "lol warning"]
+-- True
+--
+-- >>> inOrder (Node (Node Leaf (parseMessage "I 20 lol info") Leaf) (parseMessage "W 42 lol warning") (Node Leaf (parseMessage "E 2 55 lol error") Leaf)) == [LogMessage Info 20 "lol info", LogMessage Warning 42 "lol warning", LogMessage (Error 2) 55 "lol error"]
+-- True
+inOrder :: MessageTree -> [LogMessage]
+inOrder Leaf = []
+inOrder mt = traverseTree mt []
+  where
+    traverseTree :: MessageTree -> [LogMessage] -> [LogMessage]
+    traverseTree Leaf msgs = msgs
+    traverseTree (Node lt (LogMessage ty tm ms) rt) msgs = traverseTree lt [] ++ LogMessage ty tm ms:msgs ++ traverseTree rt []
+    traverseTree _ _ = []
+
