@@ -2,7 +2,7 @@
 
 module LogAnalysis where
 
-import Log
+import           Log
 
 -- | create error log message
 --
@@ -22,7 +22,7 @@ getErrorMsg _ = Unknown "Error"
 -- True
 getInformationMsg :: [String] -> LogMessage
 getInformationMsg (x : xs) = LogMessage Info (read x :: Int) (unwords xs)
-getInformationMsg _ = Unknown "Info"
+getInformationMsg _        = Unknown "Info"
 
 -- | create error warning message
 --
@@ -32,7 +32,7 @@ getInformationMsg _ = Unknown "Info"
 -- True
 getWarningMsg :: [String] -> LogMessage
 getWarningMsg (x : xs) = LogMessage Warning (read x :: Int) (unwords xs)
-getWarningMsg _ = Unknown "Warning"
+getWarningMsg _        = Unknown "Warning"
 
 -- | create parse log messages
 --
@@ -64,7 +64,7 @@ parseMessage msg = getMessage $ words msg
       "I" -> getInformationMsg xs
       "W" -> getWarningMsg xs
       "E" -> getErrorMsg xs
-      _ -> Unknown $ unwords (x : xs)
+      _   -> Unknown $ unwords (x : xs)
 
 parse :: String -> [LogMessage]
 parse logs = map parseMessage (lines logs)
@@ -109,9 +109,8 @@ build [] = Leaf
 build msg = buildTree msg Leaf
   where
     buildTree :: [LogMessage] -> MessageTree -> MessageTree
-    buildTree [] mt = mt
+    buildTree [] mt       = mt
     buildTree (x : xs) mt = buildTree xs $ insert x mt
-
 
 -- | inorder traversal
 --
@@ -131,6 +130,16 @@ inOrder mt = traverseTree mt []
   where
     traverseTree :: MessageTree -> [LogMessage] -> [LogMessage]
     traverseTree Leaf msgs = msgs
-    traverseTree (Node lt (LogMessage ty tm ms) rt) msgs = traverseTree lt [] ++ LogMessage ty tm ms:msgs ++ traverseTree rt []
+    traverseTree (Node lt (LogMessage ty tm ms) rt) msgs = traverseTree lt [] ++ LogMessage ty tm ms : msgs ++ traverseTree rt []
     traverseTree _ _ = []
 
+-- | find what went wrong
+--
+-- Examples:
+--
+-- >>> testWhatWentWrong parse whatWentWrong "sample.log"
+-- ["Way too many pickles","Bad pickle-flange interaction detected","Flange failed!"]
+whatWentWrong :: [LogMessage] -> [String]
+whatWentWrong [] = []
+whatWentWrong ((LogMessage (Error errNo) _ msg):msgs) = if errNo >= 50 then msg:whatWentWrong msgs else whatWentWrong msgs
+whatWentWrong (_:msgs) = whatWentWrong msgs
