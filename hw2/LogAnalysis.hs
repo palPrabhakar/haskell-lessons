@@ -66,5 +66,5 @@ parseMessage msg = getMessage $ words msg
         "E" -> getErrorMsg xs
         _ -> Unknown $ unwords (x:xs)
 
-
-
+parse :: String -> [LogMessage]
+parse logs = map parseMessage (lines logs)
