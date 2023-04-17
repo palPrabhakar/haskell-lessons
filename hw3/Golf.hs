@@ -47,3 +47,32 @@ skips :: [a] -> [[a]]
 skips [] = []
 skips list = zipWith (curry (\x -> sieve (snd x) list)) list [1..]
 
+-- | find local maxima  in a 3 elem list
+--
+-- Examples:
+--
+-- >>> isLocalMaxima [1,2,3]
+-- []
+--
+-- >>> isLocalMaxima [3,4,2]
+-- [4]
+isLocalMaxima :: [Integer] -> [Integer]
+isLocalMaxima [x,y,z] =  [y | x < y && y > z]
+isLocalMaxima _ = []
+
+-- | skip elements in a list
+--
+--  Examples:
+--
+-- >>> localMaxima [2,9,5,6,1]
+-- [9,6]
+--
+-- >>> localMaxima [2,3,4,1,5]
+-- [4]
+--
+-- >> localMaxima [1,2,3,4,5]
+-- []
+localMaxima :: [Integer] -> [Integer]
+localMaxima [] = []
+localMaxima list = isLocalMaxima (take 3 list) ++ localMaxima (drop 1 list)
+
