@@ -76,3 +76,6 @@ localMaxima :: [Integer] -> [Integer]
 localMaxima [] = []
 localMaxima list = isLocalMaxima (take 3 list) ++ localMaxima (drop 1 list)
 
+histogram :: [Integer] -> String
+histogram _ = []
+
