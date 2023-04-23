@@ -49,3 +49,43 @@ testF n = takeWhile (> 1) (iterate (\x -> if even x then x `div` 2 else 3 * x + 
 -- True
 fun2' :: Integer -> Integer
 fun2' n = sum (filter even (takeWhile (> 1) (iterate (\x -> if even x then x `div` 2 else 3 * x + 1) n)))
+
+data Tree a
+  = Leaf
+  | Node Integer (Tree a) a (Tree a)
+  deriving (Show, Eq)
+
+
+foldTree :: [a] -> Tree a
+foldTree _ = Leaf
+
+
+-- | Count the number of instance of element in a list
+--
+-- Examples:
+--
+-- >>> count 0 []
+-- 0
+--
+-- >>> count 2 [1, 2, 3, 2, 4, 5, 2]
+-- 3
+--
+-- >>> count True [True, False, False]
+-- 1
+count :: Eq a => a -> [a] -> Int
+count elem = foldr (\x cnt -> if x == elem then cnt+1 else cnt) 0
+
+-- | True if odd number of True in list
+--
+-- Examples:
+--
+-- >>> xor [False, True, False]
+-- True
+--
+-- >>> xor [False, True, False, True]
+-- False
+--
+-- >>> xor [True, True, True, False]
+-- True
+xor :: [Bool] -> Bool
+xor list = odd (count True list)
