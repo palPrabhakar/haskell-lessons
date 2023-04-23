@@ -55,10 +55,11 @@ data Tree a
   | Node Integer (Tree a) a (Tree a)
   deriving (Show, Eq)
 
-
+-- | create a balanced tree from a list
+--
+-- TODO
 foldTree :: [a] -> Tree a
 foldTree _ = Leaf
-
 
 -- | Count the number of instance of element in a list
 --
@@ -89,3 +90,28 @@ count elem = foldr (\x cnt -> if x == elem then cnt+1 else cnt) 0
 -- True
 xor :: [Bool] -> Bool
 xor list = odd (count True list)
+
+
+-- | Cartesian product
+--
+-- Examples:
+--
+-- >>> cartProd [1,2] ['a','b']
+-- [(1,'a'),(1,'b'),(2,'a'),(2,'b')]
+cartProd :: [a] -> [b] -> [(a, b)]
+cartProd xl yl = [(x, y) | x <- xl, y <- yl]
+
+-- | all prime numbers less than 2n+2 (except 2)
+--
+-- Examples:
+--
+-- >>> sieveSundaram 2
+-- [3,5]
+--
+-- >>> sieveSundaram 3
+-- [3,5,7]
+--
+-- >>> sieveSundaram 5
+-- [3,5,7,11]
+sieveSundaram :: Integer -> [Integer]
+sieveSundaram n = let l = [i+j+2*i*j | i <- [1..n], j <- [1..i]] in [2*x + 1 | x <- [1..n], x `notElem` l]
